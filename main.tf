@@ -48,44 +48,68 @@ resource "aws_route_table_association" "a2" {
 }
 
 ############################
-# 2. SECURITY GROUP
+# 2. SECURITY GROUPS
 ############################
 
-resource "aws_security_group" "web_sg" {
-  name        = "web-sg"
-  description = "Allow HTTP, SSH, NFS"
+# ALB Security Group
+resource "aws_security_group" "alb_sg" {
+  name        = "alb-sg"
+  description = "Allow HTTP from the internet"
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "HTTP from ALB"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  ingress {
-    description = "SSH for test"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "NFS"
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]
-  }
-
-  egress {
+egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  
+}
+
+# EC2 Security Group
+resource "aws_security_group" "ec2_sg" {
+  name        = "ec2-sg"
+  description = "Allow HTTP from ALB and NFS to EFS"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "HTTP from ALB"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }
+
+    egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# EFS Security Group
+resource "aws_security_group" "efs_sg" {
+  name        = "efs-sg"
+  description = "Allow NFS from EC2"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "NFS from EC2"
+    from_port       = 2049
+    to_port         = 2049
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2_sg.id]
+  }
+
+  
 }
 
 ############################
@@ -99,13 +123,13 @@ resource "aws_efs_file_system" "efs" {
 resource "aws_efs_mount_target" "efs_mount1" {
   file_system_id  = aws_efs_file_system.efs.id
   subnet_id       = aws_subnet.subnet1.id
-  security_groups = [aws_security_group.web_sg.id]
+  security_groups = [aws_security_group.efs_sg.id]
 }
 
 resource "aws_efs_mount_target" "efs_mount2" {
   file_system_id  = aws_efs_file_system.efs.id
   subnet_id       = aws_subnet.subnet2.id
-  security_groups = [aws_security_group.web_sg.id]
+  security_groups = [aws_security_group.efs_sg.id]
 }
 
 ############################
@@ -135,7 +159,7 @@ resource "aws_launch_template" "web_lt" {
 
   network_interfaces {
     associate_public_ip_address = true
-    security_groups             = [aws_security_group.web_sg.id]
+    security_groups             = [aws_security_group.ec2_sg.id]
   }
 
   user_data = base64encode(<<-EOF
@@ -184,7 +208,7 @@ resource "aws_lb" "web_alb" {
   internal           = false
   load_balancer_type = "application"
   subnets            = [aws_subnet.subnet1.id, aws_subnet.subnet2.id]
-  security_groups    = [aws_security_group.web_sg.id]
+  security_groups    = [aws_security_group.alb_sg.id]
 }
 
 resource "aws_lb_target_group" "web_tg" {
