@@ -48,30 +48,6 @@ This Terraform project creates a complete web infrastructure on AWS, including a
 
 ---
 
-### 📂 How to Use
-
-1. Clone this repo:
-   ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
-   ```
-
-2. Initialize Terraform:
-   ```bash
-   terraform init
-   ```
-
-3. Preview the plan:
-   ```bash
-   terraform plan
-   ```
-
-4. Apply the configuration:
-   ```bash
-   terraform apply
-   ```
-
----
 
 ### 📌 Notes
 
