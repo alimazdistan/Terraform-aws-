@@ -59,8 +59,8 @@ The infrastructure is based on a **highly available and scalable microservices a
 - **Amazon CloudWatch**:
   - Monitors EC2 CPU usage and triggers alarms
   - Auto Scaling policies:
-    - Scale out when CPU > 70%
-    - Scale in when CPU < 20%
+    - Scale out when CPU > 20%
+    - Scale in when CPU < 70%
   - Logs and metrics can be extended to other services
 
 ### 🔹 Security
