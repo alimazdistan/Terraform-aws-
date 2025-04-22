@@ -53,9 +53,6 @@ The infrastructure is based on a **highly available and scalable microservices a
   - Used as a message broker for inter-service communication
   - Runs in **SINGLE_INSTANCE** mode and private subnet
 
-- **Amazon SQS**:
-  - Fully managed queue service
-  - Used for decoupling workloads and buffering asynchronous tasks
 
 ### 🔹 Monitoring & Scaling
 
