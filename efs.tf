@@ -1,4 +1,4 @@
-# Security Group فقط برای دسترسی از EC2ها
+# Security Group 
 resource "aws_security_group" "efs_sg" {
   name        = "efs-sg"
   description = "Allow NFS from EC2 instances"
@@ -18,7 +18,7 @@ resource "aws_security_group" "efs_sg" {
   }
 }
 
-# ایجاد فایل سیستم EFS
+# Create EFS
 resource "aws_efs_file_system" "web_efs" {
   creation_token = "web-efs"
   tags = {
@@ -26,7 +26,7 @@ resource "aws_efs_file_system" "web_efs" {
   }
 }
 
-# ایجاد Mount Target در هر Subnet خصوصی
+#  Mount Target  Subnet
 resource "aws_efs_mount_target" "private_a" {
   file_system_id  = aws_efs_file_system.web_efs.id
   subnet_id       = aws_subnet.private_a.id
