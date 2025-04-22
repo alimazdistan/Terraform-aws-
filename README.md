@@ -78,7 +78,7 @@ The infrastructure is based on a **highly available and scalable microservices a
 - Memcached endpoint
 - ActiveMQ endpoint
 - EFS DNS name
-- SQS queue URL
+
 
 ---
 
