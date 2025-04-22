@@ -1,4 +1,4 @@
-# SG که فقط از EC2ها اجازه می‌ده
+
 resource "aws_security_group" "internal_sg" {
   name        = "internal-access"
   description = "Allow access only from EC2"
@@ -28,7 +28,7 @@ resource "aws_db_instance" "mysql" {
   engine             = "mysql"
   instance_class     = "db.t3.micro"
   username           = "admin"
-  password           = "Password123!" # بهتره در محیط واقعی از secrets استفاده بشه
+  password           = "Password123!" # secret is better
   allocated_storage  = 20
   db_subnet_group_name = aws_db_subnet_group.rds.name
   vpc_security_group_ids = [aws_security_group.internal_sg.id]
