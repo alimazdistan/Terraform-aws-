@@ -66,7 +66,7 @@ The infrastructure is based on a **highly available and scalable microservices a
 ### 🔹 Security
 
 - Multiple **Security Groups** with least-privilege rules:
-  - EC2 instances can access RDS, MQ, Cache, EFS, and SQS
+  - EC2 instances can access RDS, MQ, Cache, EFS
   - No service is publicly exposed except the ALB
 
 ---
